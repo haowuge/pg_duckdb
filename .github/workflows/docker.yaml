@@ -6,10 +6,7 @@ on:
   pull_request:
     paths:
       - Dockerfile
-      - docker-bake.hcl
       - ".github/workflows/docker.yaml"
-  schedule:
-    - cron: "44 4 * * *"
   workflow_dispatch:
 
 jobs:
