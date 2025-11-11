@@ -49,7 +49,7 @@ RUN apt update && \
         postgresql-18-set-user \
         postgresql-18-plpgsql-check \
         postgresql-18-cron \
-        postgresql-18-http && \  # ← pgsql-http 的官方包名
+        postgresql-18-http && \
     rm -rf /var/lib/apt/lists/*
 
 # 4. 手动编译安装 pgjwt（因无官方 APT 包）
