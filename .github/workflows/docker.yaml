@@ -14,17 +14,11 @@ on:
 
 jobs:
   docker_build:
-    name: Build Docker image for Postgres ${{ matrix.postgres }} on ${{ matrix.runner }}
+    name: Build and export Docker image (Postgres ${{ matrix.postgres }})
+    runs-on: ubuntu-24.04
     strategy:
       matrix:
         postgres: ["18"]
-        runner: ["ubuntu-24.04"]
-
-    runs-on: ${{ matrix.runner }}
-
-    env:
-      BUILDKIT_PROGRESS: plain
-      POSTGRES_VERSION: ${{ matrix.postgres }}
 
     steps:
       - name: Checkout code
@@ -32,29 +26,35 @@ jobs:
         with:
           submodules: "recursive"
 
-      - name: Compute branch tag
-        id: params
-        run: |
-          BRANCH=$(echo "${{ github.head_ref || github.ref_name }}" \
-              | sed 's/[^a-zA-Z0-9\-\.]/-/g' \
-              | cut -c 1-112 | tr '[:upper:]' '[:lower:]' \
-              | sed -e 's/-*$//')
-          echo "branch_tag=$BRANCH" >> "$GITHUB_OUTPUT"
-
       - name: Set up Docker buildx
         uses: docker/setup-buildx-action@v3
 
-      - name: Build and export image as tar
+      # 👇 关键：只构建单平台（如 linux/amd64），避免 manifest list
+      - name: Build image and load to local daemon
         uses: docker/bake-action@v5
         with:
           targets: pg_duckdb_${{ matrix.postgres }}
-          push: false                      # ← 关键：不推送
-          load: true                       # ← 加载到本地 docker daemon（可选）
-          outputs: type=docker,dest=/tmp/image.tar  # ← 导出为 tar 文件
+          push: false
+          load: true          # 加载到本地 docker
+          set: |
+            *.platform=linux/amd64   # ← 强制单平台
 
-      - name: Upload image as artifact
+      # 👇 手动导出为 tar
+      - name: Save image to tar
+        run: |
+          # 获取镜像名（根据你的 docker-bake.hcl 中 target 的 tags）
+          # 假设你的 target 名为 "postgres"，且 tag 是 "latest"
+          IMAGE_NAME="postgres:latest"  # ← 请根据实际情况修改！
+
+          # 如果不确定，可以用 docker images 列出
+          docker images
+
+          # 保存为 tar
+          docker save -o /tmp/pgduckdb-image.tar "$IMAGE_NAME"
+
+      - name: Upload as artifact
         uses: actions/upload-artifact@v4
         with:
-          name: pgduckdb-postgres-${{ matrix.postgres }}-image
-          path: /tmp/image.tar
+          name: pgduckdb-postgres-${{ matrix.postgres }}-amd64
+          path: /tmp/pgduckdb-image.tar
           retention-days: 7
