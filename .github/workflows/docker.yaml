@@ -35,16 +35,16 @@ jobs:
         with:
           targets: pg_duckdb_${{ matrix.postgres }}
           push: false
-          load: true          # 加载到本地 docker
+          load: true
           set: |
-            *.platform=linux/amd64   # ← 强制单平台
+            *.platform=linux/amd64
 
       # 👇 手动导出为 tar
       - name: Save image to tar
         run: |
           # 获取镜像名（根据你的 docker-bake.hcl 中 target 的 tags）
           # 假设你的 target 名为 "postgres"，且 tag 是 "latest"
-          IMAGE_NAME="postgres:latest"  # ← 请根据实际情况修改！
+          IMAGE_NAME="postgres:latest"
 
           # 如果不确定，可以用 docker images 列出
           docker images
