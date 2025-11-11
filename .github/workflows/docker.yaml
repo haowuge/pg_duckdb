@@ -101,7 +101,7 @@ jobs:
     name: Merge Docker image for Postgres ${{ matrix.postgres }}
     strategy:
       matrix:
-        postgres: ["14", "15", "16", "17", "18"]
+        postgres: ["18"]
 
     runs-on: ubuntu-24.04
     needs: docker_build
