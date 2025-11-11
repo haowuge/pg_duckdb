@@ -3,13 +3,12 @@ variable "REPO" {
 }
 
 variable "POSTGRES_VERSION" {
-  default = "16"
+  default = "18"
 }
 
 target "shared" {
   platforms = [
-    "linux/amd64",
-    "linux/arm64"
+    "linux/amd64"
   ]
 }
 
@@ -17,7 +16,7 @@ target "postgres" {
   inherits = ["shared"]
 
   contexts = {
-    postgres_base = "docker-image://postgres:${POSTGRES_VERSION}-bookworm"
+    postgres_base = "docker-image://postgres:${POSTGRES_VERSION}-trixie"
   }
 
   args = {
@@ -31,39 +30,6 @@ target "postgres" {
 
 target "pg_duckdb" {
   inherits = ["postgres"]
-  target = "output"
-}
-
-target "pg_duckdb_14" {
-  inherits = ["pg_duckdb"]
-
-  args = {
-    POSTGRES_VERSION = "14"
-  }
-}
-
-target "pg_duckdb_15" {
-  inherits = ["pg_duckdb"]
-
-  args = {
-    POSTGRES_VERSION = "15"
-  }
-}
-
-target "pg_duckdb_16" {
-  inherits = ["pg_duckdb"]
-
-  args = {
-    POSTGRES_VERSION = "16"
-  }
-}
-
-target "pg_duckdb_17" {
-  inherits = ["pg_duckdb"]
-
-  args = {
-    POSTGRES_VERSION = "17"
-  }
 }
 
 target "pg_duckdb_18" {
