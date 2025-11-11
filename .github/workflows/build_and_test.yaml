@@ -39,14 +39,6 @@ jobs:
       fail-fast: false
       matrix:
         include:
-        - version: REL_14_STABLE
-          type: Release
-        - version: REL_15_STABLE
-          type: Release
-        - version: REL_16_STABLE
-          type: Release
-        - version: REL_17_STABLE
-          type: Release
         # For PG18 we build DuckDB as a static library. There's nothing special
         # about the static library, nor PG18. This is only done so that we have
         # CI coverage for our logic to build a static library version.
