@@ -4,7 +4,9 @@ FROM pgduckdb/pgduckdb:18-main
 USER root
 
 # 1. 安装构建依赖（仅用于 pgjwt）、系统工具、locale、Perl 库等
-RUN apt update && \
+RUN echo "deb http://apt.postgresql.org/pub/repos/apt/ trixie-pgdg main" > /etc/apt/sources.list.d/pgdg.list && \
+    wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | gpg --dearmor -o /etc/apt/trusted.gpg.d/postgresql.gpg && \
+    apt update && \
     DEBIAN_FRONTEND=noninteractive apt install -y --no-install-recommends \
         # 系统工具
         htop \
