@@ -21,8 +21,8 @@ jobs:
     name: Build Docker image for Postgres ${{ matrix.postgres }} on ${{ matrix.runner }}
     strategy:
       matrix:
-        postgres: ["14", "15", "16", "17", "18"]
-        runner: ["ubuntu-24.04", "ubuntu-24.04-arm"]
+        postgres: ["18"]
+        runner: ["ubuntu-24.04"]
 
     runs-on: ${{ matrix.runner }}
 
